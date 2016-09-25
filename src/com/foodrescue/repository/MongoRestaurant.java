@@ -115,25 +115,24 @@ public class MongoRestaurant {
 	public List<Restaurant> retrieveData(String latitude, String longitude) {
 
 		List<Restaurant> restaurants = new ArrayList<>();
-		;
+
 		try {
 
 			BasicDBObject myCmd = new BasicDBObject();
-
-			System.out.println(this.col.getName());
-
+			BasicDBObject index = new BasicDBObject("locs","2d");
 			myCmd.append("geoNear", "restaurants");
 			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
 			myCmd.append("near", loc);
 			myCmd.append("spherical", true);
 			myCmd.append("maxDistance", Constants.maxDistance);
-
+			myCmd.append("nums", Constants.limit);
+			
 			if (!isValidLngLat(loc[0], loc[1])) {
 				System.out.println("Location coordinates are not valid");
 				return null;
 			}
 			System.out.println(myCmd);
-
+			this.col.createIndex( index);
 			CommandResult cmdResult = this.db.command(myCmd);
 			Restaurant restaurant = null;
 
@@ -145,6 +144,7 @@ public class MongoRestaurant {
 				BasicDBObject dbo = (BasicDBObject) result.get("obj");
 				restaurant.setName(dbo.getString("name"));
 				restaurant.setLocation(dbo.getString("location"));
+				restaurant.setPhone(dbo.getString("phone"));
 				restaurants.add(restaurant);
 			}
 			return restaurants;
