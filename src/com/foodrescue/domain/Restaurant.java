@@ -5,6 +5,11 @@ public class Restaurant{
 	private String Location;
 	private String Latitude;
 	
+	@Override
+	public String toString() {
+		return "Restaurant [Name=" + Name + ", Location=" + Location + ", Latitude=" + Latitude + ", Longitude="
+				+ Longitude + ", password=" + password + ", Phone=" + Phone + "]";
+	}
 	public String getLatitude() {
 		return Latitude;
 	}

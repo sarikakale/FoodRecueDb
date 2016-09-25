@@ -2,6 +2,11 @@ package com.foodrescue.domain;
 
 public class User{
 
+	@Override
+	public String toString() {
+		return "User [name=" + name + ", deviceId=" + deviceId + ", phone=" + phone + ", location=" + location
+				+ ", password=" + password + "]";
+	}
 	private String name;
 	private String deviceId;
 	private String phone;

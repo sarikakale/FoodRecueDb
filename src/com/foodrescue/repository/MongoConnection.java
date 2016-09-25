@@ -25,9 +25,9 @@ public class MongoConnection {
 			 System.out.println("CLiet is OK");
 			DB db = mongoClient.getDB(Constants.dbName);
 			
-			System.out.println(db.getCollection("Restaurants"));
+			System.out.println(db.getCollection("restaurants"));
 			
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -40,7 +40,7 @@ public class MongoConnection {
 		 try {
 			uri  = new MongoClientURI(textUri);
 			mongoClient = new MongoClient(uri);
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
