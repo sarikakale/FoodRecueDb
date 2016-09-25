@@ -9,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.foodrescue.domain.Restaurant;
+import com.foodrescue.domain.User;
+import com.foodrescue.repository.MongoMain;
 
 @Path("/res")
 public class Controller {
@@ -29,5 +31,39 @@ public class Controller {
 		return Response.ok().entity("").build(); 
 	}
 	
+	
+	//User
+	@POST 
+	@Path("/userCreate")	
+	@Consumes(MediaType.APPLICATION_JSON) 
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createUserInJSON(User u) throws Exception {
+		System.out.println("Helloooo user");
+		MongoMain m =new MongoMain();
+		
+		
+		m.insertData(u);
+	
+		return Response.ok().entity("").build();  
+	}
+	
+	
+	
+	
+	@POST
+	@Path("/userLogin")	
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loginInJSON(User u) throws Exception {
+		MongoMain m=new MongoMain();
+		boolean access=m.login(u); 
+		if(access)
+			return Response.ok().entity("").build();
+		else
+		 return Response.serverError().entity("").build();  
+	} 
+	
+	
+
 	
 }

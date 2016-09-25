@@ -24,9 +24,7 @@ public class MongoConnection {
 			 mongoClient = new MongoClient(uri);
 			 System.out.println("CLiet is OK");
 			DB db = mongoClient.getDB(Constants.dbName);
-			
-			System.out.println(db.getCollection("restaurants"));
-			
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

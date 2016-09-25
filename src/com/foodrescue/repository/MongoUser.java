@@ -1,11 +1,12 @@
 package com.foodrescue.repository;
 
 import java.util.List;
-import com.foodrescue.domain.Restaurant;
+
 import com.foodrescue.domain.User;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
 public class MongoUser {
@@ -49,6 +50,34 @@ public class MongoUser {
 		this.db = client.getDB(Constants.dbName);
 		return this.db;
 	}
+	
+	public User login(String phone, String password) {
+		try {
+			BasicDBObject document = new BasicDBObject();
+			User user = new User();
+			document.put("phone", phone);
+			document.put("password", password);
+			DBCursor cursor = this.col.find(document);
+			if (cursor.size() > 1 || cursor.size() == 0) {
+				System.out.println("HII");
+				return null;
+			} else {
+				/*
+				DBObject t = cursor.next();
+				restaurant.setName(t.get("name").toString());
+				restaurant.setPhone(t.get("phone").toString());
+				restaurant.setPassword(t.get("password").toString());
+				restaurant.setAddress(t.get("location").toString()); */ 
+				return user; 
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	public boolean insertData(User user) {
 		try {
