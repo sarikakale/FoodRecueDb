@@ -148,7 +148,7 @@ public class MongoUser {
 			myCmd.append("near", loc);
 			myCmd.append("spherical", true);
 			myCmd.append("maxDistance", Constants.maxDistance);
-			myCmd.append("nums", Constants.limit);
+			myCmd.append("nums", Constants.LIMIT);
 			if (!isValidLngLat(loc[0], loc[1])) {
 				System.out.println("Location coordinates are not valid");
 				return null;

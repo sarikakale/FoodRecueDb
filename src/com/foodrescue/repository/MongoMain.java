@@ -1,5 +1,9 @@
 package com.foodrescue.repository;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.foodrescue.domain.Restaurant;
@@ -17,6 +21,10 @@ public class MongoMain {
 		restaurant.setLocation("911 El Camino Real, Santa Clara, CA 95050");
 		restaurant.setLatitude("37.354107");
 		restaurant.setLongitude("-121.955238");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		System.out.println(dateFormat.format(date)); //2014/08/06 15:59:48
+		restaurant.setDate(dateFormat.format(date));
 		//MongoUser mongoUser=new MongoUser();
 		//MongoRestaurant mongoRestaurant = new MongoRestaurant();
 		/*MongoUser mongoUser=new MongoUser();
@@ -37,7 +45,7 @@ public class MongoMain {
 		//mongoRestaurant.insertData(restaurant);
 		//mongoUser.insertData(user);
 		//System.out.println(mongoRestaurant.updateData(restaurant));
-		System.out.println(mongoRestaurant.retrieveData("37.40", "-121.96"));
+		System.out.println(mongoRestaurant.retrieveData("37.354107", "-121.96"));
 	}
 
 	public boolean login(User user) {
@@ -56,6 +64,36 @@ public class MongoMain {
 		System.out.println("hello");
 		MongoUser mongoUser = new MongoUser();
 		mongoUser.insertData(user);
+	}
+	
+	public void updateData(User user){
+		MongoUser mongoUser=new MongoUser();
+		mongoUser.updateData(user);
+	}
+	
+	public void updateRestaurantData(String phone,String date){
+		MongoRestaurant mongoRestaurant=new MongoRestaurant();
+		Restaurant rest=new Restaurant();
+		rest.setDate(date);
+		mongoRestaurant.updateData(rest);
+		
+	}
+	
+	public Date convertDateToString(String dateStr){
+		 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+		 
+		 
+	        try {
+
+	            Date date = formatter.parse(dateStr);
+	            System.out.println(date);
+	            System.out.println(formatter.format(date));
+	            return date;
+
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	        return null;
 	}
 	
 	//Retrieve Restaurant List

@@ -1,11 +1,20 @@
 package com.foodrescue.domain;
 
+import java.util.Date;
+
 public class Restaurant{
 	private String Name;
 	private String Location;
 	private String Latitude;
 	private int flag;
+	private String date;
 	
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
 	public int getFlag() {
 		return flag;
 	}

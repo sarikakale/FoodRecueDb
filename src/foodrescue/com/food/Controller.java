@@ -55,10 +55,13 @@ public class Controller {
 	public Response loginInJSON(User u) throws Exception {
 		MongoMain m = new MongoMain();
 		boolean access = m.login(u);
-		if (access)
+
+		if (access) {
+			m.updateData(u);
 			return Response.ok().entity("").build();
-		else
+		} else {
 			return Response.serverError().entity("").build();
+		}
 	}
 
 	@GET
@@ -76,15 +79,21 @@ public class Controller {
 		}
 
 	}
+	
 
 	@POST
 	@Path("/pushNotifications")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response sendPushNotification(String latitude, String longitude) throws Exception {
+	public Response sendPushNotification(String latitude, String longitude,String phone, String date) throws Exception {
 		MongoMain mongoMain = new MongoMain();
 		List<String> users = mongoMain.getUserData(latitude, longitude);
-
+		
+		mongoMain.updateRestaurantData(phone, date);
+		//push notification
+		
+		
+		
 		if (users.size() == 0) {
 			return Response.ok().entity(users).build();
 		} else {

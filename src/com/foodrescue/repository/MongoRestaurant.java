@@ -1,6 +1,9 @@
 package com.foodrescue.repository;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -89,15 +92,16 @@ public class MongoRestaurant {
 
 			BasicDBObject searchQuery = new BasicDBObject().append("hosting", "hostB");
 
-			double[] locs = { Double.parseDouble(restaurant.getLongitude()), Double.parseDouble(restaurant.getLatitude()) };
+			double[] locs = { Double.parseDouble(restaurant.getLongitude()),
+					Double.parseDouble(restaurant.getLatitude()) };
 			BasicDBObject document = new BasicDBObject();
 			document.append("$set",
 					new BasicDBObject().append("phone", restaurant.getPhone())
 							.append("location", restaurant.getLocation()).append("locs", locs)
 							.append("latitude", restaurant.getLatitude()).append("longitude", restaurant.getLongitude())
-							.append("password", restaurant.getPassword())
-							.append("name", restaurant.getName())
-							.append("flag", 1));
+							.append("password", restaurant.getPassword()).append("name", restaurant.getName())
+							.append("flag", 1).append("date", restaurant.getDate()));
+
 			BasicDBObject query = new BasicDBObject().append("phone", restaurant.getPhone());
 
 			this.col.update(query, document);
@@ -120,9 +124,13 @@ public class MongoRestaurant {
 
 		try {
 
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			Date date = new Date();
+
 			BasicDBObject myCmd = new BasicDBObject();
 			BasicDBObject index = new BasicDBObject("locs", "2d");
-			BasicDBObject flagQuery=new BasicDBObject("flag",Constants.AVAILABLE);
+			BasicDBObject flagQuery = new BasicDBObject("flag", Constants.AVAILABLE).append("date",
+					dateFormat.format(date));
 			myCmd.append("geoNear", "restaurants");
 			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
 			myCmd.append("near", loc);
