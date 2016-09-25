@@ -49,6 +49,7 @@ public class MongoRestaurant {
 			document.put("longitude", restaurant.getLongitude());
 			document.put("phone", restaurant.getPhone());
 			document.put("password", restaurant.getPassword());
+			document.put("flag", 0);
 			this.col.insert(document);
 			return true;
 		} catch (Exception e) {
@@ -95,7 +96,8 @@ public class MongoRestaurant {
 							.append("location", restaurant.getLocation()).append("locs", locs)
 							.append("latitude", restaurant.getLatitude()).append("longitude", restaurant.getLongitude())
 							.append("password", restaurant.getPassword())
-							.append("name", restaurant.getName()));
+							.append("name", restaurant.getName())
+							.append("flag", 1));
 			BasicDBObject query = new BasicDBObject().append("phone", restaurant.getPhone());
 
 			this.col.update(query, document);
@@ -120,12 +122,14 @@ public class MongoRestaurant {
 
 			BasicDBObject myCmd = new BasicDBObject();
 			BasicDBObject index = new BasicDBObject("locs", "2d");
+			BasicDBObject flagQuery=new BasicDBObject("flag",Constants.AVAILABLE);
 			myCmd.append("geoNear", "restaurants");
 			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
 			myCmd.append("near", loc);
 			myCmd.append("spherical", true);
 			myCmd.append("maxDistance", Constants.maxDistance);
-			myCmd.append("nums", Constants.limit);
+			myCmd.append("nums", Constants.LIMIT);
+			myCmd.append("query", flagQuery);
 
 			if (!isValidLngLat(loc[0], loc[1])) {
 				System.out.println("Location coordinates are not valid");

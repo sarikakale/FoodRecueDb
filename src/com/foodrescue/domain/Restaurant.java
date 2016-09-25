@@ -4,7 +4,14 @@ public class Restaurant{
 	private String Name;
 	private String Location;
 	private String Latitude;
+	private int flag;
 	
+	public int getFlag() {
+		return flag;
+	}
+	public void setFlag(int flag) {
+		this.flag = flag;
+	}
 	@Override
 	public String toString() {
 		return "Restaurant [Name=" + Name + ", Location=" + Location + ", Latitude=" + Latitude + ", Longitude="

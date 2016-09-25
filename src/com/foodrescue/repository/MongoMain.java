@@ -36,7 +36,8 @@ public class MongoMain {
 		// mongoRestaurant.updateData(restaurant);
 		//mongoRestaurant.insertData(restaurant);
 		//mongoUser.insertData(user);
-		System.out.println(mongoRestaurant.updateData(restaurant));
+		//System.out.println(mongoRestaurant.updateData(restaurant));
+		System.out.println(mongoRestaurant.retrieveData("37.40", "-121.96"));
 	}
 
 	public boolean login(User user) {
