@@ -12,10 +12,11 @@ public class MongoMain {
 		restaurant.setPhone("4082440255");
 		restaurant.setPassword("abcd");
 		restaurant.setLocation("911 El Camino Real, Santa Clara, CA 95050");
-		restaurant.setLatitude("37.354988");
-		restaurant.setLongitude("-121.946549");
-		mongoRestaurant.retrieveData("37.3333268", "-121.884589");
-	
+		restaurant.setLatitude("37.354107");
+		restaurant.setLongitude("-121.955238");
+		//mongoRestaurant.removeData("40856788899", "pass123");
+		mongoRestaurant.retrieveData("37.34", "-121.90");
+		//mongoRestaurant.insertData(restaurant);
 	}
 
 }

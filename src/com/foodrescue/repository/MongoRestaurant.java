@@ -1,9 +1,12 @@
 package com.foodrescue.repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.foodrescue.domain.Restaurant;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
@@ -17,7 +20,7 @@ public class MongoRestaurant {
 	private MongoConnection connection = null;
 	private MongoClient client = null;
 	private DB db = null;
-	private DBCollection col = null;;
+	private DBCollection col = null;
 
 	public MongoRestaurant() {
 		getConnection();
@@ -27,15 +30,20 @@ public class MongoRestaurant {
 		this.db = client.getDB(Constants.dbName);
 		return this.db;
 	}
-
+	
+	//Insert data
 	public boolean insertData(Restaurant restaurant) {
 		try {
-
+			
+			if(getData(restaurant.getPhone())){
+				return false;
+			}
+			
 			BasicDBObject document = new BasicDBObject();
 			document.put("name", restaurant.getName());
 			document.put("location", restaurant.getLocation());
-			double[] locs = { Double.parseDouble(restaurant.getLatitude()),
-					Double.parseDouble(restaurant.getLongitude()) };
+			double[] locs = { Double.parseDouble(restaurant.getLongitude()),
+					Double.parseDouble(restaurant.getLatitude()) };
 			document.put("locs", locs);
 			document.put("latitude", restaurant.getLatitude());
 			document.put("longitude", restaurant.getLongitude());
@@ -48,60 +56,108 @@ public class MongoRestaurant {
 			return false;
 		}
 	}
+	
+	//Check Duplicates
+	private boolean getData(String phone) {
+		try {
+			BasicDBObject document = new BasicDBObject();
+			
+			Restaurant restaurant = new Restaurant();
+			
+			document.put("phone", phone);
+			
+			DBCursor cursor = this.col.find(document);
+			
+			if (cursor.size() != 0) {
+				return true;
+			} else {
+				return false;
+			}
 
-	public boolean updateData(Restaurant restaurant) {
-		return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
 	}
 
-	
-	
-	//find restaurants
-	
-	 public void nearWithMaxDistanceExample(String latitude, String longitude) {
-		 
-	        final BasicDBObject filter = new BasicDBObject("near", new double[] { Double.parseDouble(latitude), Double.parseDouble(longitude) });
-	        filter.put("$maxDistance", (double)2500/6378137);
+	//Update Data
+	public boolean updateData(Restaurant restaurant) {
+		try {
 
-	        final BasicDBObject query = new BasicDBObject("locs", filter);
+			BasicDBObject document = new BasicDBObject();
+			
+			BasicDBObject query = new BasicDBObject();
+			query.put("phone", restaurant.getPhone());
+			
+			document.put("name", restaurant.getName());
+			document.put("location", restaurant.getLocation());
+			double[] locs = { Double.parseDouble(restaurant.getLongitude()),
+					Double.parseDouble(restaurant.getLatitude()) };
+			document.put("locs", locs);
+			document.put("latitude", restaurant.getLatitude());
+			document.put("longitude", restaurant.getLongitude());
+			document.put("phone", restaurant.getPhone());
+			document.put("password", restaurant.getPassword());
+			this.col.update(query,document);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-	        int count = 0;
-	        for (final DBObject venue : this.col.find(query).toArray()) {
-	            //System.out.println("---- near venue: " + venue.get("name"));
-	            count++;
-	        }
-	        System.out.println(count);
-	       
-	    }
+	// find restaurants
+	boolean isValidLngLat(double lng, double lat) {
+		return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+	}
 
 	// Find Restaurants
 	public List<Restaurant> retrieveData(String latitude, String longitude) {
+
 		List<Restaurant> restaurants = new ArrayList<>();
+		;
+		try {
 
-		BasicDBObject myCmd = new BasicDBObject();
-		myCmd.append("geoNear", this.col.getName());
-		double[] loc = { Double.parseDouble(latitude), Double.parseDouble(longitude) };
+			BasicDBObject myCmd = new BasicDBObject();
 
-		myCmd.append("near", loc);
-		myCmd.append("spherical", true);
-		//myCmd.append("maxDistance", (double) 2500 / 6378137);
-		myCmd.append("distanceMultiplier", 6378137);
+			System.out.println(this.col.getName());
 
-		System.out.println(myCmd);
-		
-		this.col.createIndex(new BasicDBObject("point", "2dsphere"));
-		CommandResult cursor = this.db.command(myCmd);
-		System.out.println(cursor.toString());
-		/*
-		 * Restaurant restaurant = null; while (cursor.isEmpty()) { DBObject t =
-		 * cursor.next(); restaurant = new Restaurant();
-		 * restaurant.setName(t.get("name").toString());
-		 * restaurant.setLocation(t.get("location").toString());
-		 * restaurants.add(restaurant); }
-		 */
+			myCmd.append("geoNear", "restaurants");
+			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
+			myCmd.append("near", loc);
+			myCmd.append("spherical", true);
+			myCmd.append("maxDistance", Constants.maxDistance);
+
+			if (!isValidLngLat(loc[0], loc[1])) {
+				System.out.println("Location coordinates are not valid");
+				return null;
+			}
+			System.out.println(myCmd);
+
+			CommandResult cmdResult = this.db.command(myCmd);
+			Restaurant restaurant = null;
+
+			BasicDBList results = (BasicDBList) cmdResult.get("results");
+
+			for (Iterator<Object> it = results.iterator(); it.hasNext();) {
+				BasicDBObject result = (BasicDBObject) it.next();
+				restaurant = new Restaurant();
+				BasicDBObject dbo = (BasicDBObject) result.get("obj");
+				restaurant.setName(dbo.getString("name"));
+				restaurant.setLocation(dbo.getString("location"));
+				restaurants.add(restaurant);
+			}
+			return restaurants;
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return restaurants;
 
 	}
 
+	// login check to check if user login is valid
 	public Restaurant getData(String phone, String password) {
 
 		try {
@@ -128,9 +184,10 @@ public class MongoRestaurant {
 			return null;
 		}
 	}
-	//delete data
+
+	// delete data
 	public boolean removeData(String phone, String password) {
-		
+
 		try {
 			BasicDBObject document = new BasicDBObject();
 			Restaurant restaurant = new Restaurant();
@@ -150,13 +207,15 @@ public class MongoRestaurant {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 	}
 
+	// Close Connection
 	public void closeConnection() {
 		this.connection.closeConnection();
 	}
 
+	// Get Connection
 	public void getConnection() {
 		connection = new MongoConnection();
 		client = connection.getConnection();
