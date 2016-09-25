@@ -10,9 +10,15 @@ import com.mongodb.MongoClient;
 
 public class MongoUser {
 	
-	MongoConnection connection=null;
-	MongoClient client = null;
+	private MongoConnection connection = null;
+	private MongoClient client = null;
+	private DB db = null;
+	private DBCollection col = null;
 	
+	public  MongoUser() {
+		 
+		getConnection();
+	}
 	public List<User> retrieveData(String User) {
 		// TODO Auto-generated method stub
 		return null;
@@ -27,31 +33,33 @@ public class MongoUser {
 		return false;
 	}
 
-	public MongoClient getConnection() {
-		connection = new MongoConnection();
-		client= connection.getConnection();
-		return client;
-	}
-
 	public void closeConnection() {
-		connection.closeConnection();
+		this.connection.closeConnection();
 	}
 
-	public DB getDB(){
-		return client.getDB(Constants.dbName);
+	public void getConnection() {
+		connection = new MongoConnection();
+		client = connection.getConnection();
+		this.db = getDB();
+		this.col = this.db.getCollection("restaurants");
+
+	}
+
+	public DB getDB() {
+		this.db = client.getDB(Constants.dbName);
+		return this.db;
 	}
 	
 	public boolean insertData(User user) {
 		try {
-			DB db = getDB();
-			DBCollection collection = db.getCollection("users");
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("name", user.getName());
 			document.put("deviceId", user.getDeviceId());
 			document.put("location", user.getLocation());
 			document.put("phone", user.getPhone());
 			document.put("password", user.getPassword());
-			collection.insert(document);
+			this.col.insert(document);
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
