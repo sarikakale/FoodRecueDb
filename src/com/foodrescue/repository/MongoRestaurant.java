@@ -30,15 +30,15 @@ public class MongoRestaurant {
 		this.db = client.getDB(Constants.dbName);
 		return this.db;
 	}
-	
-	//Insert data
+
+	// Insert data
 	public boolean insertData(Restaurant restaurant) {
 		try {
-			
-			if(getData(restaurant.getPhone())){
+
+			if (getData(restaurant.getPhone())) {
 				return false;
 			}
-			
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("name", restaurant.getName());
 			document.put("location", restaurant.getLocation());
@@ -56,18 +56,18 @@ public class MongoRestaurant {
 			return false;
 		}
 	}
-	
-	//Check Duplicates
+
+	// Check Duplicates
 	private boolean getData(String phone) {
 		try {
 			BasicDBObject document = new BasicDBObject();
-			
+
 			Restaurant restaurant = new Restaurant();
-			
+
 			document.put("phone", phone);
-			
+
 			DBCursor cursor = this.col.find(document);
-			
+
 			if (cursor.size() != 0) {
 				return true;
 			} else {
@@ -80,15 +80,15 @@ public class MongoRestaurant {
 		}
 	}
 
-	//Update Data
+	// Update Data
 	public boolean updateData(Restaurant restaurant) {
 		try {
 
 			BasicDBObject document = new BasicDBObject();
-			
+
 			BasicDBObject query = new BasicDBObject();
 			query.put("phone", restaurant.getPhone());
-			
+
 			document.put("name", restaurant.getName());
 			document.put("location", restaurant.getLocation());
 			double[] locs = { Double.parseDouble(restaurant.getLongitude()),
@@ -98,7 +98,7 @@ public class MongoRestaurant {
 			document.put("longitude", restaurant.getLongitude());
 			document.put("phone", restaurant.getPhone());
 			document.put("password", restaurant.getPassword());
-			this.col.update(query,document);
+			this.col.update(query, document);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,7 +158,7 @@ public class MongoRestaurant {
 	}
 
 	// login check to check if user login is valid
-	public Restaurant getData(String phone, String password) {
+	public Restaurant login(String phone, String password) {
 
 		try {
 			BasicDBObject document = new BasicDBObject();
@@ -170,11 +170,6 @@ public class MongoRestaurant {
 				System.out.println("HII");
 				return null;
 			} else {
-				DBObject t = cursor.next();
-				restaurant.setName(t.get("name").toString());
-				restaurant.setPhone(t.get("phone").toString());
-				restaurant.setPassword(t.get("password").toString());
-				restaurant.setLocation(t.get("location").toString());
 				return restaurant;
 			}
 
