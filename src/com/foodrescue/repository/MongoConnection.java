@@ -9,26 +9,14 @@ import com.mongodb.MongoClientURI;
 
 public class MongoConnection {
 	String textUri = "mongodb://foodrescue:foodrescue@ds041556.mlab.com:41556/foodrescue";
-	Mongo mongo = null;
+//	Mongo mongo = null;
 	MongoClient mongoClient=null;
 	MongoClientURI uri = null;
 	
 	
 	
 	public   MongoConnection(){
-		/* mongo=new Mongo("ds041556.mlab.com",41556);
-		 mongoClient = new MongoClient();*/
-		
-		 try {
-			 uri  = new MongoClientURI(textUri);
-			 mongoClient = new MongoClient(uri);
-			 System.out.println("CLiet is OK");
-			DB db = mongoClient.getDB(Constants.dbName);
-						
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	
 	}
 	
 	
@@ -36,7 +24,7 @@ public class MongoConnection {
 	//get the mongo connection
 	public MongoClient getConnection(){
 		 try {
-			uri  = new MongoClientURI(textUri);
+			uri  = new MongoClientURI(Constants.connectionURI);
 			mongoClient = new MongoClient(uri);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

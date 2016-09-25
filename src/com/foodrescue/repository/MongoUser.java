@@ -29,15 +29,35 @@ public class MongoUser {
 		getConnection();
 	}
 
-	
-
 	public boolean removeData(String restId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean updateData(User user) {
-		return false;
+		try {
+
+			BasicDBObject newDocument = new BasicDBObject();
+			
+			BasicDBObject searchQuery = new BasicDBObject().append("hosting", "hostB");
+
+			
+			double[] locs = { Double.parseDouble(user.getLongitude()), Double.parseDouble(user.getLatitude()) };
+			BasicDBObject document = new BasicDBObject();
+			document.append("$set",
+					new BasicDBObject().append("deviceId", user.getDeviceId()).append("phone", user.getPhone())
+							.append("location", user.getLocation()).append("locs", locs)
+							.append("latitude", user.getLatitude()).append("longitude", user.getLongitude()));
+			BasicDBObject query = new BasicDBObject().append("phone", user.getPhone());
+
+			
+
+			this.col.update(query, document);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public void closeConnection() {
@@ -118,10 +138,10 @@ public class MongoUser {
 		try {
 
 			BasicDBObject myCmd = new BasicDBObject();
-			BasicDBObject index = new BasicDBObject("locs","2d");
-			
+			BasicDBObject index = new BasicDBObject("locs", "2d");
+
 			System.out.println(this.col.getName());
-			
+
 			myCmd.append("geoNear", "users");
 			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
 			System.out.println(loc[0]);
@@ -134,13 +154,13 @@ public class MongoUser {
 				return null;
 			}
 			System.out.println(myCmd);
-			
-			this.col.createIndex( index);
+
+			this.col.createIndex(index);
 			CommandResult cmdResult = this.db.command(myCmd);
 			User user = null;
 			System.out.println(cmdResult);
 			BasicDBList results = (BasicDBList) cmdResult.get("results");
-			
+
 			for (Iterator<Object> it = results.iterator(); it.hasNext();) {
 				BasicDBObject result = (BasicDBObject) it.next();
 				user = new User();

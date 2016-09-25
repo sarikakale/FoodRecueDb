@@ -84,20 +84,20 @@ public class MongoRestaurant {
 	public boolean updateData(Restaurant restaurant) {
 		try {
 
+			BasicDBObject newDocument = new BasicDBObject();
+
+			BasicDBObject searchQuery = new BasicDBObject().append("hosting", "hostB");
+
+			double[] locs = { Double.parseDouble(restaurant.getLongitude()), Double.parseDouble(restaurant.getLatitude()) };
 			BasicDBObject document = new BasicDBObject();
+			document.append("$set",
+					new BasicDBObject().append("phone", restaurant.getPhone())
+							.append("location", restaurant.getLocation()).append("locs", locs)
+							.append("latitude", restaurant.getLatitude()).append("longitude", restaurant.getLongitude())
+							.append("password", restaurant.getPassword())
+							.append("name", restaurant.getName()));
+			BasicDBObject query = new BasicDBObject().append("phone", restaurant.getPhone());
 
-			BasicDBObject query = new BasicDBObject();
-			query.put("phone", restaurant.getPhone());
-
-			document.put("name", restaurant.getName());
-			document.put("location", restaurant.getLocation());
-			double[] locs = { Double.parseDouble(restaurant.getLongitude()),
-					Double.parseDouble(restaurant.getLatitude()) };
-			document.put("locs", locs);
-			document.put("latitude", restaurant.getLatitude());
-			document.put("longitude", restaurant.getLongitude());
-			document.put("phone", restaurant.getPhone());
-			document.put("password", restaurant.getPassword());
 			this.col.update(query, document);
 			return true;
 		} catch (Exception e) {
@@ -119,20 +119,20 @@ public class MongoRestaurant {
 		try {
 
 			BasicDBObject myCmd = new BasicDBObject();
-			BasicDBObject index = new BasicDBObject("locs","2d");
+			BasicDBObject index = new BasicDBObject("locs", "2d");
 			myCmd.append("geoNear", "restaurants");
 			double[] loc = { Double.parseDouble(longitude), Double.parseDouble(latitude) };
 			myCmd.append("near", loc);
 			myCmd.append("spherical", true);
 			myCmd.append("maxDistance", Constants.maxDistance);
 			myCmd.append("nums", Constants.limit);
-			
+
 			if (!isValidLngLat(loc[0], loc[1])) {
 				System.out.println("Location coordinates are not valid");
 				return null;
 			}
 			System.out.println(myCmd);
-			this.col.createIndex( index);
+			this.col.createIndex(index);
 			CommandResult cmdResult = this.db.command(myCmd);
 			Restaurant restaurant = null;
 

@@ -11,18 +11,18 @@ public class MongoMain {
 
 		MongoRestaurant mongoRestaurant = new MongoRestaurant();
 		Restaurant restaurant = new Restaurant();
-		restaurant.setName("Jack in the box San Jose");
+		restaurant.setName("Jack in the box ");
 		restaurant.setPhone("4082440255");
 		restaurant.setPassword("abcd");
 		restaurant.setLocation("911 El Camino Real, Santa Clara, CA 95050");
 		restaurant.setLatitude("37.354107");
 		restaurant.setLongitude("-121.955238");
-		MongoUser mongoUser=new MongoUser();
+		//MongoUser mongoUser=new MongoUser();
 		//MongoRestaurant mongoRestaurant = new MongoRestaurant();
 		/*MongoUser mongoUser=new MongoUser();
 		User user = new User();
-		user.setName("Jack");
-		user.setDeviceId("1234abcdefghi");
+		user.setName("Jack New");
+		user.setDeviceId("1234abcdefghixyzer");
 		user.setPhone("4082440255");
 		user.setPassword("abcd");
 		user.setLocation("911 El Camino Real, Santa Clara, CA 95050");
@@ -35,8 +35,8 @@ public class MongoMain {
 		// mongoRestaurant.removeData("40856788899", "pass123");
 		// mongoRestaurant.updateData(restaurant);
 		//mongoRestaurant.insertData(restaurant);
-
-		System.out.println(mongoUser.retrieveData("37.35", "-121.95"));
+		//mongoUser.insertData(user);
+		System.out.println(mongoRestaurant.updateData(restaurant));
 	}
 
 	public boolean login(User user) {
