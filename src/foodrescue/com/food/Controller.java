@@ -21,9 +21,13 @@ public class Controller {
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createRestaurantInJSON(Restaurant e) throws Exception {
-		System.out.println("Helloooo");
+	public Response createRestaurantInJSON(Restaurant restaurant) throws Exception {
+		
+		MongoMain mongoMain=new MongoMain();
+		mongoMain.insertData(restaurant);
 		return Response.ok().entity("").build();
+
+			
 	}
 
 	@POST
@@ -64,6 +68,23 @@ public class Controller {
 		}
 	}
 
+	
+	@POST
+	@Path("/restLogin")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loginInJSON(Restaurant rest) throws Exception {
+		MongoMain m = new MongoMain();
+		boolean access = m.login(rest);
+
+		if (access) {
+			
+			return Response.ok().entity("").build();
+		} else {
+			return Response.serverError().entity("").build();
+		}
+	}
+	
 	@GET
 	@Path("/restaurantList")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -91,6 +112,7 @@ public class Controller {
 		
 		mongoMain.updateRestaurantData(phone, date);
 		//push notification
+		
 		
 		
 		
